@@ -1,0 +1,8 @@
+Objetivo GC - kit para crear el APK
+
+1. Sube estos 5 archivos (sin la carpeta) a un hosting gratis con HTTPS:
+   - Netlify Drop: app.netlify.com/drop (arrastra la carpeta)
+   - o GitHub Pages: nuevo repositorio publico, sube los archivos, Settings > Pages.
+2. Abre la URL en Chrome del movil: ya aparece Instalar app.
+3. Para el APK: entra en pwabuilder.com, pega la URL, pulsa Start y luego Package for stores > Android.
+   Descarga el paquete: dentro hay un .apk firmado para instalar directamente.

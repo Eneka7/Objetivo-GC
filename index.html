@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Objetivo GC">
+<title>Objetivo GC</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#14463a">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Sora:wght@600;700&display=swap">
+<style>
+:root{--bg:#f3f5f2;--card:#fff;--ink:#16211c;--mut:#5b6a63;--line:#dce3de;--acc:#14573f;--on:#fff;--hl:#e3efe8;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1713;--card:#17231d;--ink:#e5eee9;--mut:#9bb0a5;--line:#2a3a32;--acc:#5cc29a;--on:#06201a;--hl:#1f3329;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1713;--card:#17231d;--ink:#e5eee9;--mut:#9bb0a5;--line:#2a3a32;--acc:#5cc29a;--on:#06201a;--hl:#1f3329;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 Manrope,-apple-system,"Segoe UI",Roboto,system-ui,sans-serif}
+header{background:#14463a;color:#fff;text-align:center;padding:20px 14px 14px}
+.brand{font:700 26px/1.1 Sora,system-ui,sans-serif;margin:0}
+.sub{font-size:13px;opacity:.8;margin-top:6px}
+#app{max-width:560px;margin:0 auto;padding:12px 14px 96px}
+h2{font:600 17px Sora,system-ui,sans-serif;margin:0 0 10px}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin:0 0 10px}
+.b{display:flex;gap:12px;align-items:flex-start}
+.card b{font-weight:700}
+small{display:block;color:var(--mut);font-size:14px;line-height:1.5;margin-top:4px}
+.mut{color:var(--mut);font-size:13px}
+.dn{display:flex;align-items:center;justify-content:space-between;margin:2px 0 6px}
+.dn b{font:600 17px Sora,system-ui,sans-serif}
+.dn button{width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:22px}
+input[type=checkbox]{width:24px;height:24px;flex:none;margin:2px 0 0;accent-color:var(--acc)}
+input:not([type=checkbox]),select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px}
+.btn{border:0;border-radius:12px;background:var(--acc);color:var(--on);font:600 15px inherit;padding:13px 16px;width:100%}
+.btn.s{background:var(--card);color:var(--ink);border:1px solid var(--line);margin-top:4px}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 12px;font:600 13px inherit;flex:none}
+.chip.on{background:var(--acc);color:var(--on);border-color:var(--acc)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.x{border:0;background:none;color:var(--mut);font-size:22px;width:40px;height:40px;margin:-8px -8px 0 0}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:var(--card);border-top:1px solid var(--line);padding:6px 6px calc(6px + env(safe-area-inset-bottom,0px))}
+nav button{flex:1;border:0;background:none;color:var(--mut);font:600 12px inherit;padding:12px 1px;border-radius:10px}
+nav button.on{color:var(--acc);background:var(--hl)}
+textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px}
+.pl{display:flex;justify-content:space-between;font-size:14px}
+.pb{height:9px;border-radius:6px;background:var(--line);overflow:hidden;margin:4px 0 12px}
+.pb i{display:block;height:100%}
+.fl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.lb{display:block;font-size:12px;color:var(--mut);margin:0 0 3px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+</style></head><body>
+<header><h1 class="brand">Objetivo GC</h1><div class="sub" id="cd"></div></header>
+<div id="app"></div>
+<nav><button data-t="hoy" onclick="go('hoy')">Hoy</button><button data-t="sem" onclick="go('sem')">Semana</button><button data-t="tem" onclick="go('tem')">Temas</button><button data-t="mar" onclick="go('mar')">Marcas</button><button data-t="nut" onclick="go('nut')">Comida</button><button data-t="con" onclick="go('con')">Consejos</button></nav>
+<script>
+const $=s=>document.querySelector(s),K='gc-v1',pad=n=>String(n).padStart(2,'0'),END='2027-08-31',ST='2026-10-19';
+const DN=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'],PN=['Base','Fuerza','Específica','Pruebas'];
+const dk=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),D=k=>new Date(k+'T00:00'),fd=k=>D(k).toLocaleDateString('es',{day:'numeric',month:'short'});
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const def={anc:{d:ST,i:5,lap:2},names:{},skip:{},done:{},tests:[],exam:'2027-07-10',n:{days:{},w:{},rc:[],l:{kcal:2500,p:160,c:280,f:75,water:3000,steps:8000,sleep:8,target:0}}};
+let S;try{S={...def,...JSON.parse(localStorage.getItem(K))}}catch(e){S={...def}}
+S.n={...def.n,...S.n,l:{...def.n.l,...(S.n&&S.n.l)}};
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+const TN=['','Derechos humanos','Igualdad','Prevención de riesgos laborales','Constitución Española','Derecho de la Unión Europea (TUE y TFUE)','Instituciones internacionales','Derecho civil','Derecho penal','Derecho procesal penal (LECrim, CGPJ, habeas corpus y estatuto de la víctima)','Derecho administrativo (Leyes 39/2015 y 40/2015)','Protección de datos','Extranjería','Seguridad pública y privada','Ministerios del Interior y de Defensa','Fuerzas y Cuerpos de Seguridad (LO 2/1986)','Protección civil','Telecomunicaciones','Topografía','Deontología','Responsabilidad penal del menor','Violencia de género (VioGén)','Reglamento de armas y explosivos','Derecho fiscal (represión del contrabando)'];
+const FI=[0,
+['Declaración Universal: 10 de diciembre de 1948, Asamblea General de la ONU, 30 artículos.','Convenio Europeo de Derechos Humanos (1950): lo aplica el TEDH, con sede en Estrasburgo.','Pactos de 1966 (civiles y políticos; económicos, sociales y culturales), en vigor desde 1976.','Carta de Derechos Fundamentales de la UE: proclamada en 2000 y vinculante desde Lisboa (1 de diciembre de 2009).'],
+['LO 3/2007, de 22 de marzo, para la igualdad efectiva de mujeres y hombres.','Plan de igualdad obligatorio en empresas de 50 o más personas.','Ley 15/2022, integral para la igualdad de trato y la no discriminación.','Ley 4/2023, para la igualdad real y efectiva de las personas trans y los derechos LGTBI.'],
+['Ley 31/1995, de 8 de noviembre, de Prevención de Riesgos Laborales.','Comité de Seguridad y Salud: empresas con 50 o más trabajadores.','Delegados de prevención: 50-100 trabajadores, 2; 101-500, 3; 501-1.000, 4; 1.001-2.000, 5; 2.001-3.000, 6; 3.001-4.000, 7; desde 4.001, 8.','Órgano técnico nacional: INSST. Vigilancia: Inspección de Trabajo y Seguridad Social.'],
+['Aprobada por las Cortes el 31 de octubre de 1978, referéndum el 6 de diciembre y sanción el 27; publicada en el BOE el 29 de diciembre de 1978.','Reforma ordinaria (art. 167): 3/5 de cada Cámara; referéndum si lo pide 1/10 de los miembros de una Cámara en 15 días.','Reforma agravada (art. 168): 2/3 de cada Cámara, disolución, nueva ratificación por 2/3 y referéndum.','Reformas hechas: art. 13.2 (1992), art. 135 (2011) y art. 49 (2024).'],
+['Tratado de Lisboa: firmado el 13 de diciembre de 2007 y en vigor desde el 1 de diciembre de 2009.','Instituciones (art. 13 TUE): Parlamento Europeo, Consejo Europeo, Consejo, Comisión, TJUE, BCE y Tribunal de Cuentas.','Mayoría cualificada: 55 % de los Estados (15) que sumen el 65 % de la población.','Reglamento: obligatorio y directamente aplicable. Directiva: obliga en el resultado y se transpone.','Recurso de anulación ante el TJUE: 2 meses. Parlamento Europeo desde 2024: 720 eurodiputados, 61 de España.'],
+['ONU: Carta de San Francisco, 26 de junio de 1945; España ingresó en 1955.','Consejo de Seguridad: 15 miembros, 5 permanentes con veto y 10 no permanentes por 2 años.','OTAN: Tratado de Washington (4 de abril de 1949); España entró en 1982.','Consejo de Europa (1949): Estrasburgo. OSCE: Viena. Interpol: Lyon. Europol: La Haya.'],
+['Código Civil: Real Decreto de 24 de julio de 1889.','La personalidad se adquiere con el nacimiento con vida, tras el entero desprendimiento del seno materno (art. 30).','Prescripción de acciones personales sin plazo especial: 5 años (art. 1964).','Legítima de los hijos: dos tercios del caudal (un tercio de legítima estricta y otro de mejora).','Ley 8/2021: sistema de apoyos a personas con discapacidad en lugar de incapacitación.'],
+['Código Penal: LO 10/1995, de 23 de noviembre.','Pena menos grave: prisión de 3 meses a 5 años. Pena grave: prisión de más de 5 años.','Eximentes (art. 20), atenuantes (art. 21) y agravantes (art. 22).','Prisión permanente revisable: desde la LO 1/2015 (en vigor el 1 de julio de 2015).','Responsabilidad penal general desde los 18 años; de 14 a 17, LO 5/2000.'],
+['Ley de Enjuiciamiento Criminal: Real Decreto de 14 de septiembre de 1882.','Detención policial: máximo 72 horas, y siempre el tiempo estrictamente necesario (art. 17 CE).','Habeas corpus: LO 6/1984; el juez resuelve en 24 horas.','Estatuto de la víctima del delito: Ley 4/2015, de 27 de abril.','CGPJ: presidente (que lo es también del Tribunal Supremo) y 20 vocales por 5 años: 12 jueces y magistrados y 8 juristas.'],
+['Ley 39/2015 (procedimiento) y Ley 40/2015 (régimen jurídico del sector público), ambas de 1 de octubre de 2015.','Plazo máximo para resolver si la norma no dice otro: 3 meses. Silencio positivo como regla general.','Recurso de alzada: 1 mes (acto expreso). Reposición: 1 mes. Contencioso-administrativo: 2 meses.','Los plazos por días son hábiles: no cuentan sábados, domingos ni festivos.','Responsabilidad patrimonial: reclamar en 1 año.'],
+['RGPD: Reglamento (UE) 2016/679, aplicable desde el 25 de mayo de 2018. LO 3/2018, de 5 de diciembre.','Brecha de seguridad: notificar a la autoridad en 72 horas.','Consentimiento de menores: desde los 14 años en España.','Responder a un derecho (acceso, rectificación, supresión...): 1 mes, prorrogable 2 más.','Multas: hasta 20 millones de euros o el 4 % de la facturación mundial. Autoridad: AEPD. Datos policiales y penales: LO 7/2021.'],
+['LO 4/2000, de 11 de enero. Reglamento: RD 1155/2024, en vigor desde el 20 de mayo de 2025 (deroga el RD 557/2011).','Estancia de corta duración: hasta 90 días en un periodo de 180.','Internamiento en CIE: máximo 60 días.','Asilo: Ley 12/2009.','Infracciones leves, graves y muy graves; multa leve hasta 500 euros.'],
+['LO 4/2015, de 30 de marzo, de protección de la seguridad ciudadana. Ley 5/2014, de Seguridad Privada.','Infracciones: leves hasta 600 euros; graves de 601 a 30.000; muy graves de 30.001 a 600.000.','Retención para identificar a una persona: el tiempo imprescindible y como máximo 6 horas.','Los vigilantes de seguridad privada actúan bajo la Ley 5/2014 y colaboran con las FCS.'],
+['Ministerio del Interior: la Secretaría de Estado de Seguridad coordina las Direcciones Generales de la Policía y de la Guardia Civil.','La Guardia Civil depende de Interior en funciones policiales y de Defensa en misiones militares (LO 2/1986).','LO 5/2005, de la Defensa Nacional. El JEMAD es el jefe del Estado Mayor de la Defensa.','Fuerzas Armadas: Ejército de Tierra, Armada y Ejército del Aire y del Espacio.'],
+['LO 2/1986, de 13 de marzo. Cuerpos: Policía Nacional, Guardia Civil, policías autonómicas y policías locales.','La Guardia Civil es un instituto armado de naturaleza militar (fundada en 1844); la Policía Nacional es un instituto armado de naturaleza civil.','Principio básico: intervenir siempre, en cualquier tiempo y lugar, incluso fuera de servicio.','Uso de armas: congruencia, oportunidad y proporcionalidad.'],
+['Ley 17/2015, de 9 de julio, del Sistema Nacional de Protección Civil.','Estado de alarma: lo declara el Gobierno por 15 días, prorrogables por el Congreso (LO 4/1981).','Estado de excepción: autorización previa del Congreso; 30 días prorrogables otros 30.','Estado de sitio: lo declara el Congreso por mayoría absoluta, a propuesta del Gobierno.','Emergencia de interés nacional: la declara el Ministro del Interior.'],
+['Ley 11/2022, de 28 de junio, General de Telecomunicaciones (sustituyó a la Ley 9/2014).','Ley 34/2002 (LSSI): servicios de la sociedad de la información y comercio electrónico.','Ley 25/2007: conservación de datos de comunicaciones durante 12 meses.','112: número único europeo de emergencias. Regulador: CNMC.'],
+['UTM: 60 husos de 6 grados de longitud. España peninsular: husos 29, 30 y 31; Canarias, 27 y 28.','Escala = distancia en el mapa / distancia real. En 1:25.000, 1 cm son 250 m.','Norte geográfico, magnético y de cuadrícula. Declinación magnética: ángulo entre el geográfico y el magnético.','Curvas de nivel: equidistancia constante; muy juntas indican pendiente fuerte.','Sistema geodésico oficial en España: ETRS89.'],
+['Código de Conducta del personal de la Guardia Civil: Real Decreto 176/2022. Fija pautas de comportamiento, sin efectos sancionadores.','Se aplican las Reales Ordenanzas de las Fuerzas Armadas, con las particularidades de la Guardia Civil.','LO 11/2007: derechos y deberes. LO 12/2007: régimen disciplinario, con faltas leves, graves y muy graves.','El Código de Conducta recoge la neutralidad política e ideológica (art. 13).'],
+['LO 5/2000, de 12 de enero: responsabilidad penal de los menores de 14 a 17 años.','Menores de 14: no hay responsabilidad penal; actúan los servicios de protección.','Dos tramos: 14-15 y 16-17 años.','Instruye el Ministerio Fiscal y resuelve el Juez de Menores.','Detención: lo imprescindible y como máximo 24 horas hasta liberar al menor o ponerlo a disposición del Fiscal.'],
+['LO 1/2004, de 28 de diciembre, de protección integral contra la violencia de género.','Sistema VioGén (2007): 5 niveles de riesgo: no apreciado, bajo, medio, alto y extremo.','Teléfono 016: 24 horas, gratuito y sin rastro en la factura.','Juzgados de Violencia sobre la Mujer. Orden de protección: el juez la resuelve en 72 horas.','Dispositivos telemáticos de control (pulseras) en casos de riesgo.'],
+['Reglamento de Armas: RD 137/1993, de 29 de enero. Reglamento de Explosivos: RD 130/2017.','Licencias: B defensa personal, D caza mayor (rayadas), E escopetas, F tiro deportivo.','Guía de pertenencia: documento que identifica cada arma.'],
+['LO 12/1995, de 12 de diciembre, de Represión del Contrabando.','Es delito cuando el valor es de 150.000 euros o más; en tabaco, desde 15.000 euros.','Drogas, armas o explosivos: delito con independencia del valor.','Lo persiguen el Servicio Fiscal de la Guardia Civil y Vigilancia Aduanera (AEAT).']];
+const SEQ=[];for(let t=1;t<=23;t++){SEQ.push([t,t==9||t==10?1:0]);if(t==9||t==10)SEQ.push([t,2])}
+const tl=(t,p)=>`Tema ${pad(t)}${' · '+(S.names[t]||TN[t])}${p?` (parte ${p} de 2)`:''}`;
+let SI={},SDL=[],cur=new Date(),tab='hoy';
+function build(){SI={};SDL=[];const e=D(S.exam);let k=0;
+ for(const d=D(S.anc.d);d<=e;d.setDate(d.getDate()+1)){const s=dk(d),w=d.getDay();
+  if(w>0&&w<6&&!S.skip[s]){const n=S.anc.i+k;SI[s]={e:SEQ[n%25],n:n%25,lap:S.anc.lap+Math.floor(n/25),k};SDL.push(s);k++}}}
+const wk=k=>Math.max(0,Math.floor(Math.round((D(k)-D(ST))/864e5)/7)),ph=(k,w)=>k>S.exam?3:w<12?0:w<24?1:w<38?2:3;
+const RW='Calentamiento: 10 min de trote suave, movilidad de tobillo y cadera y 4 progresivos de 80 m.\n';
+function run(w,p,dl){
+ if(w%6==5&&!dl)return RW+'TEST de 2.000 m: reparte el esfuerzo, mismo ritmo cada 400 m (objetivo: 1:53 por vuelta, menos de 9:25 en total). Apunta el tiempo en Marcas.\nVuelta a la calma: 5 min de trote suave.';
+ const m=Math.min,x=w%2==0?[`${dl?4:m(10,5+(w/3|0))}×200 m a ritmo de 2 km (56 s por 200 m), recuperación 90 s trotando`,`${dl?3:m(7,4+((w-12)/4|0))}×400 m a ritmo de 2 km (1:53), recuperación 90 s`,`${dl?2:m(4,2+((w-24)/5|0))}×800 m a ritmo objetivo (3:46), recuperación 2 min, y 4×100 m progresivos`,'1.000 m a ritmo objetivo (4:43) y 4×200 m rápidos, recuperación 2 min'][p]
+ :[`Fondo de ${dl?20:m(45,20+2*w)} min a ritmo de conversación (si te ahogas, alterna 4 min de trote y 1 de caminar)`,`Fondo de ${dl?30:m(50,35+((w-12)/2|0))} min continuos y 4×20 s progresivos al final`,'25 min con 2 bloques de 8 min a ritmo algo incómodo, 3 min de trote entre ambos','20 min suaves y 4 rectas de 60 m'][p];
+ return RW+(w%2==0?'Series: ':'')+x+'\nVuelta a la calma: 5 min de trote suave y estiramientos.'}
+function pool(wd,w,p,dl){const n=Math.min(8,3+(w/4|0)),x=wd==2?[`Técnica: 6×50 m con ejercicios (patada con tabla, un brazo, codo alto), pausa 20 s; luego ${n}×100 m crol cómodo, pausa 30 s`,`${n}×100 m a ritmo constante, pausa 20 s; 4×50 m respirando cada 3 brazadas`,'8×50 m a ritmo de prueba más 3 s, pausa 30 s; 200 m suaves','6×50 m de técnica y 4×50 m a ritmo de prueba, pausa 40 s'][p]
+ :['8×25 m rápidos, pausa 30 s; 4×50 m a buen ritmo, pausa 45 s','6×50 m por debajo de 70 s, pausa 40 s; 4×25 m explosivos','3×50 m a tope con salida desde el borde, pausa 3 min; 4×50 m sostenidos, pausa 30 s','2×50 m cronometrados con salida desde el borde, pausa 5 min; resto suave'][p];
+ return 'Calentamiento: 200 m suaves.\n'+(dl?'Semana de descarga: baja un 30 % el volumen.\n':'')+x+'\nVuelta a la calma: 100 m suaves.'}
+const CT=[['Flexiones estrictas con codos cerrados 4×{a}','Fondos en paralelas con pies apoyados 3×{b}','Pike push-up 3×{b}','Plancha 3×{p} s','Hollow hold 3×20 s'],['Flexiones con pies elevados 4×{a}','Fondos en paralelas 4×{b}','Flexiones diamante 3×{b}','Plancha con toques de hombro 3×12','Hollow hold 3×30 s'],['Flexiones con codos cerrados: 5 series de 8 a 12 con 60 s de descanso y una serie al máximo','Fondos 4×{b}','Pike push-up con pies elevados 3×8','L-sit con rodillas flexionadas 4×15 s'],['Simulacro: una serie de flexiones estrictas con codos cerrados al máximo (objetivo: 16)','3 series al 60 % de tu máximo','Fondos 3×{b}','Core 10 min']];
+const CJ=[['Dominadas asistidas con goma o negativas lentas 4×{c}','Remo invertido 4×{a}','Sentadilla 4×15','Zancadas 3×10 por pierna','Puente de glúteo 3×15','Colgarse de la barra 3×{p} s'],['Dominadas asistidas 4×{c} o estrictas 5×(máximo menos 1)','Remo invertido con pies elevados 4×{b}','Sentadilla búlgara 3×8 por pierna','Saltos al cajón 4×5','Elevación de piernas en barra 3×8'],['Dominadas en escalera (1-2-3-4) ×3','Remo australiano 4×10','Sentadilla a una pierna asistida 3×5','Saltos 4×6 y 4 rectas de 30 m','Elevación de piernas en barra 4×10'],['Dominadas: una serie al máximo','Remo invertido 3×8','Sentadillas 3×12','Saltos suaves 3×5']];
+function cal(wd,w,p,dl){const v={a:Math.min(15,6+(w/3|0)),b:Math.min(12,5+(w/4|0)),c:Math.min(6,3+(w/6|0)),p:Math.min(60,30+w)};
+ return 'Calentamiento: 5 min de cuerda o saltos, círculos de hombro y cadera y 2 series ligeras del primer ejercicio. Descansa 90 s entre series.\n'+(dl?'Semana de descarga: 1 serie menos por ejercicio y 3 repeticiones en reserva.\n':'')+(wd==2?CT:CJ)[p].map(x=>'• '+x.replace(/\{(\w)\}/g,(_,k)=>v[k])).join('\n')}
+function day(k){
+ const wd=D(k).getDay(),w=wk(k),p=ph(k,w),dl=(w+1)%4==0,B=[];
+ if(wd>0&&wd<6){
+  if(k>S.exam)B.push({t:'9:00',n:'Sesión extra',d:['Movilidad y prevención: 40 min de tobillo, cadera y hombro.','Circuito de agilidad: 6 pasadas cronometradas.','Carrera suave de 30 min y 6 rectas de 50 m.','Core 30 min y saltos suaves.','Descarga activa: movilidad 30 min.'][wd-1]});
+  else if(SI[k]){const it=SI[k],r=it.k>=5?SI[SDL[it.k-5]]:0;B.push({t:'8:00–14:00',n:'Estudio · '+tl(...it.e),d:`Vuelta ${it.lap}.`+(r?` Repaso de 20 min: ${tl(...r.e)}.`:'')+(wd==2||wd==4?' Si te queda energía: 15 min de tema 24 (inglés) o 25 (ortografía y gramática).':'')})}
+  else B.push({t:'8:00–14:00',n:'Día libre de estudio',d:S.skip[k]?'Saltado: el temario pasa al siguiente día.':'Fuera del plan de estudio.'})}
+ if(wd==1)B.push({t:'18:30–20:30',n:'Inglés B2'},{t:'21:00',n:'Pista · '+(w%6==5&&!dl?'test de 2 km':w%2?'fondo':'series'),d:run(w,p,dl)});
+ if(wd==2)B.push({t:'17:00–18:00',n:'Piscina · técnica y base',d:pool(2,w,p,dl)},{t:'21:00',n:'Calistenia · empuje y core',d:cal(2,w,p,dl)});
+ if(wd==3)B.push({t:'17:00–22:30',n:'Academia de oposición'});
+ if(wd==4)B.push({t:'17:00–18:00',n:'Piscina · velocidad',d:pool(4,w,p,dl)},{t:'21:00',n:'Calistenia · tirón y piernas',d:cal(4,w,p,dl)});
+ if(wd==5)B.push({t:'17:00',n:'Running de pruebas físicas (academia)',d:'Sigue la sesión de la academia. Si terminas con energía, añade 4 pasadas del circuito de agilidad (objetivo: menos de 14 s) y 2 min de movilidad.'});
+ if(!wd||wd==6)B.push({t:'Todo el día',n:'Descanso',d:'Duerme bien, camina y haz movilidad suave. Hoy se consolida el progreso.'});
+ return B}
+const go=t=>{tab=t;render();scrollTo(0,0)};
+function mv(n){const d=new Date(cur);d.setDate(d.getDate()+n);if(dk(d)>END)return;cur=d;render()}
+function gd(k){cur=D(k);tab='hoy';render()}
+function tg(k,i){const s=k+'|'+i;S.done[s]?delete S.done[s]:S.done[s]=1;save();render()}
+function sk(k){S.skip[k]?delete S.skip[k]:S.skip[k]=1;build();save();render()}
+function hoy(){const k=dk(cur),B=day(k),w=wk(k),p=ph(k,w),n=B.filter((_,i)=>S.done[k+'|'+i]).length,ok=D(k).getDay()%6&&k>=S.anc.d&&k<=S.exam;
+ return `<div class="dn"><button onclick="mv(-1)" aria-label="Día anterior">‹</button><b>${DN[D(k).getDay()]} ${fd(k)}</b><button onclick="mv(1)" aria-label="Día siguiente">›</button></div>
+ <div class="mut" style="text-align:center;margin:0 0 10px">Fase ${PN[p]} · semana ${w+1}${(w+1)%4==0?' · descarga':''} · ${n} de ${B.length} hechos</div>
+ ${B.map((b,i)=>`<label class="card b"><input type="checkbox" ${S.done[k+'|'+i]?'checked':''} onchange="tg('${k}',${i})"><div><b>${b.t} · ${esc(b.n)}</b>${b.d?`<small>${esc(b.d).replace(/\n/g,'<br>')}</small>`:''}</div></label>`).join('')}
+ ${ok?`<button class="btn s" onclick="sk('${k}')">${S.skip[k]?'Recuperar este día de estudio':'Hoy no estudio: pasar el tema al siguiente día'}</button>`:''}`}
+function sem(){const m=new Date(cur);m.setDate(m.getDate()-(m.getDay()+6)%7);
+ let h=`<div class="dn"><button onclick="mv(-7)" aria-label="Semana anterior">‹</button><b>Semana del ${fd(dk(m))}</b><button onclick="mv(7)" aria-label="Semana siguiente">›</button></div>`;
+ for(let i=0;i<7;i++){const d=new Date(m);d.setDate(m.getDate()+i);const k=dk(d);h+=`<div class="card" onclick="gd('${k}')"><b>${DN[d.getDay()]} ${d.getDate()}</b><small>${day(k).map(b=>b.t.split('–')[0]+' · '+esc(b.n)).join('<br>')}</small></div>`}
+ return h}
+let OP=0;
+function fi(t){OP=OP==t?0:t;render()}
+function ren(t){const v=prompt('Nombre del tema '+t,S.names[t]||'');if(v!==null){S.names[t]=v.trim();save();render()}}
+function anc(t){const d=new Date();while(d.getDay()%6==0||S.skip[dk(d)])d.setDate(d.getDate()+1);const s=dk(d),c=SI[s],i=SEQ.findIndex(x=>x[0]==t);S.anc={d:s,i,lap:c?c.lap+(i<c.n?1:0):S.anc.lap};build();save();render()}
+function ex(v){S.exam=v;build();save();render()}
+function tem(){const t0=dk(new Date());
+ let h=`<div class="card"><h2>Fecha del examen</h2><div class="row">${[['2027-07-03','Sábado 3 de julio'],['2027-07-10','Sábado 10 de julio']].map(e=>`<button class="chip${S.exam==e[0]?' on':''}" onclick="ex('${e[0]}')">${e[1]}</button>`).join('')}</div><small>Hasta el examen estudias por la mañana. Después, la mañana pasa a entrenamiento hasta el 31 de agosto.</small></div>`;
+ for(let t=1;t<=23;t++){const nx=SDL.find(s=>s>=t0&&SI[s].e[0]==t);h+=`<div class="card"><b>${tl(t)}</b><small>${nx?'Próxima vez: '+fd(nx):'Sin fecha en el calendario'}${t==9||t==10?' · dos partes':''}</small><div class="row" style="margin-top:8px"><button class="chip${OP==t?' on':''}" onclick="fi(${t})">Ficha</button><button class="chip" onclick="ren(${t})">Nombre</button><button class="chip" onclick="anc(${t})">Hoy toca</button></div>${OP==t?`<div style="margin-top:8px">${FI[t].map(x=>`<small style="color:var(--ink)">• ${x}</small>`).join('')}<small>Contrasta las cifras con la norma vigente.</small></div>`:''}</div>`}
+ return h+'<div class="card"><b>Temas 24 y 25</b><small>Inglés y ortografía/gramática: 15 min los martes y jueves al terminar el estudio, cuando puedas.</small></div>'}
+const TT=['2.000 m (min:s)','Natación 50 m (segundos)','Flexiones estrictas, codos cerrados (máximo)','Dominadas (máximo)','Circuito de agilidad (segundos)'];
+const OB=[[0,'2.000 m','menos de 9:25 (1:53 por 400 m)',v=>v<=565],[1,'Natación 50 m','70 s o menos',v=>v<=70],[2,'Flexiones estrictas, codos cerrados','16 o más',v=>v>=16],[4,'Circuito de agilidad','14 s o menos',v=>v<=14]];
+const pv=(k,v)=>{const s=String(v).replace(',','.');if(k)return parseFloat(s);const p=s.split(':');return p.length>1?p[0]*60+ +p[1]:NaN};
+function obj(){return `<div class="card"><h2>Objetivos de las pruebas</h2>${OB.map(o=>{const k=o[0],a=S.tests.filter(x=>x.k==k).map(x=>pv(k,x.v)).filter(x=>x==x),b=a.length?(k==2?Math.max(...a):Math.min(...a)):null;return `<div class="b" style="justify-content:space-between;padding:6px 0;border-top:1px solid var(--line)"><div><b>${o[1]}</b><small>Objetivo: ${o[2]}</small></div><div style="text-align:right"><b>${b===null?'—':k?b:Math.floor(b/60)+':'+pad(Math.round(b%60))}</b><small>${b===null?'sin marca':o[3](b)?'conseguido':'te falta'}</small></div></div>`}).join('')}</div>`}
+function addT(){const v=$('#tv').value.trim();if(!v)return;S.tests.push({d:dk(new Date()),k:+$('#tt').value,v});save();render()}
+function delT(i){S.tests.splice(i,1);save();render()}
+function mar(){return obj()+`<div class="card"><h2>Apuntar marca</h2><select id="tt" aria-label="Prueba">${TT.map((x,i)=>`<option value="${i}">${x}</option>`).join('')}</select><input id="tv" placeholder="Valor" style="margin:8px 0"><button class="btn" onclick="addT()">Guardar</button><small>Apunta cada test para ver cuánto te falta para tus objetivos.</small></div>
+ <div class="card"><h2>Historial</h2>${S.tests.length?S.tests.map((x,i)=>`<div class="b" style="justify-content:space-between;border-top:1px solid var(--line);padding:6px 0"><div><b>${esc(x.v)}</b><small>${TT[x.k]} · ${fd(x.d)}</small></div><button class="x" onclick="delT(${i})" aria-label="Borrar">×</button></div>`).reverse().join(''):'<small>Aún no hay marcas. Haz el primer test y apúntalo.</small>'}</div>`}
+const nn=v=>parseFloat(String(v).replace(',','.'))||0,r1=n=>String(Math.round(n*10)/10).replace('.',','),nt=f=>f.reduce((a,x)=>({k:a.k+x.k,p:a.p+x.p,c:a.c+x.c,f:a.f+x.f}),{k:0,p:0,c:0,f:0});
+const nd=k=>S.n.days[k]||(S.n.days[k]={food:[],water:0,steps:0,sleep:0,note:''});
+const nb=(l,v,m,c)=>`<div class="pl"><span>${l}</span><span${m&&v>m?' style="color:#c0392b;font-weight:700"':''}>${Math.round(v)} / ${m} g</span></div><div class="pb"><i style="width:${m?Math.min(100,v/m*100):0}%;background:${c}"></i></div>`;
+function nsv(f){f();save();render()}
+function naddF(){const g=i=>nn($('#'+i).value),p=g('fp'),c=g('fc'),f=g('ff');let k=g('fk');if(!k)k=4*p+4*c+9*f;if(!k)return;nput({n:$('#fn').value.trim()||'Comida',k:Math.round(k),p,c,f})}
+function nput(e){nsv(()=>{nd(dk(cur)).food.push({...e,id:Date.now()+Math.floor(Math.random()*999)});S.n.rc=[e,...S.n.rc.filter(r=>r.n!==e.n)].slice(0,8)})}
+const nrep=i=>nput({...S.n.rc[i]}),ndel=id=>nsv(()=>{const d=nd(dk(cur));d.food=d.food.filter(x=>x.id!==id)}),nwat=m=>nsv(()=>{const d=nd(dk(cur));d.water=Math.max(0,d.water+m)}),nset=(f,v)=>nsv(()=>{nd(dk(cur))[f]=f=='note'?v:nn(v)}),nlim=(f,v)=>{S.n.l[f]=nn(v);save()},naddW=()=>{const v=nn($('#nw').value);if(v>=20&&v<=400)nsv(()=>{S.n.w[dk(cur)]=v})},ndelW=k=>nsv(()=>{delete S.n.w[k]});
+function ntips(ws){const L=S.n.l,last=S.n.w[ws[ws.length-1]],o=[],ds=Object.keys(S.n.days).filter(x=>S.n.days[x].food.length&&(new Date()-D(x))/864e5<=7),av=f=>ds.length?ds.reduce((a,x)=>a+f(S.n.days[x]),0)/ds.length:0,aK=av(d=>nt(d.food).k),aP=av(d=>nt(d.food).p),aW=av(d=>d.water),aZ=av(d=>d.sleep||0);
+ if(!L.target)o.push('Pon tu peso objetivo en Mis límites para ver cuánto te falta.');
+ else if(last>L.target)o.push(`Te faltan ${r1(last-L.target)} kg. Un ritmo sostenible es de ${r1(last*.005)} a ${r1(last*.01)} kg por semana.`);
+ else o.push('Has llegado a tu peso objetivo: pasa a calorías de mantenimiento.');
+ if(ds.length>2&&aK>L.kcal*1.05)o.push(`Tu media de 7 días es ${Math.round(aK)} kcal, por encima de tu límite de ${L.kcal}.`);
+ if(ds.length>2&&aP<L.p*.9)o.push(`Tu proteína media es ${Math.round(aP)} g, por debajo de tu objetivo de ${L.p} g. Ayuda a recuperar y a conservar músculo.`);
+ if(ds.length>2&&aW<L.water*.8)o.push(`Bebes de media ${Math.round(aW)} ml; tu meta es ${L.water} ml.`);
+ if(aZ&&aZ<L.sleep-1)o.push(`Duermes de media ${r1(aZ)} h. Dormir poco frena la recuperación y aumenta el hambre.`);
+ o.push('Con entrenos tan exigentes, no recortes calorías de más: bajarías rendimiento y subirías el riesgo de lesión. Pesa siempre en las mismas condiciones y mira la tendencia semanal.');
+ return o}
+function nut(){
+ const k=dk(cur),d=S.n.days[k]||{food:[],water:0,steps:0,sleep:0,note:''},t=nt(d.food),L=S.n.l,ws=Object.keys(S.n.w).sort(),bw=(v,m,c)=>`<div class="pb"><i style="width:${m?Math.min(100,v/m*100):0}%;background:${c}"></i></div>`;
+ let h=`<div class="dn"><button onclick="mv(-1)" aria-label="Día anterior">‹</button><b>${DN[D(k).getDay()]} ${fd(k)}</b><button onclick="mv(1)" aria-label="Día siguiente">›</button></div>
+<div class="card"><h2>Calorías y macros</h2><div class="pl"><span>Calorías</span><span${t.k>L.kcal?' style="color:#c0392b;font-weight:700"':''}>${Math.round(t.k)} / ${L.kcal} kcal</span></div>${bw(t.k,L.kcal,'var(--acc)')}${nb('Proteína',t.p,L.p,'#3b6fd4')+nb('Carbohidratos',t.c,L.c,'#c98a0b')+nb('Grasas',t.f,L.f,'#a8467a')}</div>
+<div class="card"><h2>Agua, pasos y sueño</h2><div class="pl"><span>Agua</span><span>${d.water} / ${L.water} ml</span></div>${bw(d.water,L.water,'#2a86b8')}<div class="row"><button class="btn s" style="flex:1" onclick="nwat(-250)">−250</button><button class="btn s" style="flex:1" onclick="nwat(250)">+250</button><button class="btn s" style="flex:1" onclick="nwat(500)">+500</button></div>
+<div class="fl" style="margin-top:14px"><div><label class="lb" for="ns">Pasos (meta ${L.steps})</label><input id="ns" inputmode="numeric" value="${d.steps||''}" onchange="nset('steps',this.value)"></div><div><label class="lb" for="nz">Sueño en horas (meta ${L.sleep})</label><input id="nz" inputmode="decimal" value="${d.sleep||''}" onchange="nset('sleep',this.value)"></div></div></div>
+<div class="card"><h2>Añadir comida</h2><input id="fn" placeholder="Qué has comido" autocomplete="off"><div class="g4"><div><label class="lb" for="fk">kcal</label><input id="fk" inputmode="decimal"></div><div><label class="lb" for="fp">Prot. g</label><input id="fp" inputmode="decimal"></div><div><label class="lb" for="fc">Carb. g</label><input id="fc" inputmode="decimal"></div><div><label class="lb" for="ff">Grasa g</label><input id="ff" inputmode="decimal"></div></div><button class="btn" onclick="naddF()">Añadir</button><small>Si dejas kcal vacío se calculan con los macros.</small>${S.n.rc.length?`<div class="row" style="margin-top:10px">${S.n.rc.map((r,i)=>`<button class="chip" onclick="nrep(${i})">${esc(r.n)}</button>`).join('')}</div>`:''}</div>
+<div class="card"><h2>Registro del día</h2>${d.food.length?d.food.map(x=>`<div class="b" style="justify-content:space-between;border-top:1px solid var(--line);padding:6px 0"><div>${esc(x.n)}<small>${x.k} kcal · P ${r1(x.p)} · C ${r1(x.c)} · G ${r1(x.f)}</small></div><button class="x" onclick="ndel(${x.id})" aria-label="Borrar">×</button></div>`).join(''):'<small>Aún no has añadido nada.</small>'}<label class="lb" for="nnote" style="margin-top:12px">Nota del día</label><textarea id="nnote" rows="2" onchange="nset('note',this.value)">${esc(d.note||'')}</textarea></div>
+<div class="card"><h2>Peso</h2><div class="row"><input id="nw" inputmode="decimal" placeholder="kg" value="${S.n.w[k]||''}" style="flex:1;width:auto"><button class="btn" style="width:auto" onclick="naddW()">Guardar</button></div>`;
+ if(ws.length>1){const pts=ws.slice(-30).map(x=>[D(x).getTime(),S.n.w[x]]),vs=pts.map(p=>p[1]).concat(L.target?[L.target]:[]),mn=Math.min(...vs)-.5,mx=Math.max(...vs)+.5,t0=pts[0][0],t1=pts[pts.length-1][0],X=t=>30+(t1>t0?(t-t0)/(t1-t0):.5)*270,Y=v=>10+(mx-v)/(mx-mn)*110;
+  h+=`<svg viewBox="0 0 320 140" style="width:100%;margin-top:10px" role="img" aria-label="Evolución del peso"><text x="0" y="14" font-size="10" fill="var(--mut)">${r1(mx)}</text><text x="0" y="122" font-size="10" fill="var(--mut)">${r1(mn)}</text>${L.target?`<line x1="30" x2="305" y1="${Y(L.target)}" y2="${Y(L.target)}" stroke="var(--acc)" stroke-dasharray="4 4"/>`:''}<polyline fill="none" stroke="#2a86b8" stroke-width="2.5" points="${pts.map(p=>X(p[0])+','+Y(p[1])).join(' ')}"/>${pts.map(p=>`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="3.5" fill="#2a86b8"/>`).join('')}</svg>`}
+ if(ws.length)h+=ntips(ws).map(x=>`<small style="color:var(--ink);margin-top:8px">• ${x}</small>`).join('')+ws.slice(-5).reverse().map(x=>`<div class="b" style="justify-content:space-between;border-top:1px solid var(--line);margin-top:8px;padding-top:4px"><div>${r1(S.n.w[x])} kg<small>${fd(x)}</small></div><button class="x" onclick="ndelW('${x}')" aria-label="Borrar">×</button></div>`).join('');
+ h+=`</div><div class="card"><h2>Mis límites</h2><div class="fl">${[['kcal','Calorías'],['p','Proteína (g)'],['c','Carbohidratos (g)'],['f','Grasas (g)'],['water','Agua (ml)'],['steps','Pasos'],['sleep','Sueño (h)'],['target','Peso objetivo (kg)']].map(a=>`<div><label class="lb" for="l_${a[0]}">${a[1]}</label><input id="l_${a[0]}" inputmode="decimal" value="${L[a[0]]||''}" onchange="nlim('${a[0]}',this.value)"></div>`).join('')}</div><small>Son valores de partida editables. Con entrenos tan exigentes, ajústalos con un dietista si puedes.</small></div>`;
+ return h}
+const CS=[['Calistenia (principiante, 88 kg)',['Tu peso es la carga: empieza con variantes asistidas (goma, negativas de 3 a 5 s, remo invertido) y sube una repetición por semana antes de endurecer el ejercicio.','Técnica completa: pecho cerca del suelo, cuerpo en línea, barbilla sobre la barra. Una repetición mala no cuenta en la prueba.','En días libres, 2 o 3 series cortas al 50 % de tu máximo mejoran el gesto sin fatigarte.']],
+['Natación 50 m',['La velocidad viene de la técnica: cuerpo largo, mirada al fondo, patada pequeña desde la cadera y codo alto.','Respira cada 2 o 3 brazadas y suelta el aire dentro del agua; levantar la cabeza hunde las piernas.','Practica la salida desde el borde y el deslizamiento: ahí se ganan segundos.']],
+['Carrera de 2.000 m',['Reparte el esfuerzo: mismo ritmo en cada 400 m. Salir fuerte es el error más común.','Con tu peso el impacto es alto: no subas el volumen más de un 10 % semanal, usa zapatilla amortiguada y alterna superficie.','Un 80 % de rodajes fáciles y un 20 % de calidad. Si te duele la tibia o la rodilla, cambia a natación o bici una semana.']],
+['Estudio, segunda vuelta',['Pasa de leer a recordar: esquema en blanco y test del tema al terminar.','Repasa a 1, 7 y 21 días. La app te pone el repaso del tema de la semana anterior.','Bloques de 50 min y 10 de descanso, con el móvil lejos. Un test cronometrado a la semana.']],
+['Recuperación y lesiones',['Duerme 7 u 8 horas y come proteína en cada comida. Martes y jueves tienes doble sesión: hidrátate y respeta las 3 horas entre ambas.','El dolor articular o punzante no son agujetas: para y consulta con un fisio o médico.','Cada cuarta semana es de descarga. No te la saltes: evita lesiones antes del examen.']]];
+function con(){return CS.map(c=>`<div class="card"><h2>${c[0]}</h2>${c[1].map(x=>`<small style="margin:0 0 8px;color:var(--ink)">• ${x}</small>`).join('')}</div>`).join('')}
+function render(){document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===tab));
+ const n=Math.round((D(S.exam)-D(dk(new Date())))/864e5);$('#cd').textContent=n>0?`Faltan ${n} días para el examen`:'Fase de pruebas físicas hasta el 31 de agosto';
+ $('#app').innerHTML={hoy,sem,tem,mar,nut,con}[tab]()}
+build();render();
+</script><script>if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
+</body></html>
